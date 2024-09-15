@@ -6,16 +6,17 @@ import ErrorMessage from './components/ErrorMessage/ErrorMessage';
 import LoadMoreBtn from './components/LoadMoreBtn/LoadMoreBtn';
 import ImageModal from './components/ImageModal/ImageModal';
 import axios from 'axios';
-import './App.css'
+import './App.css';
+import { Image } from './types'; // Import the interface
 
-const App = () => {
-  const [images, setImages] = useState([]);
-  const [query, setQuery] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+const App: React.FC = () => {
+  const [images, setImages] = useState<Image[]>([]);
+  const [query, setQuery] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState<number>(1);
+  const [selectedImage, setSelectedImage] = useState<Image | null>(null);
+  const [hasMore, setHasMore] = useState<boolean>(false);
 
   useEffect(() => {
     if (!query) return;
@@ -31,7 +32,7 @@ const App = () => {
         setImages((prevImages) => [...prevImages, ...response.data.results]);
         setHasMore(response.data.results.length > 0);
       } catch (error) {
-        setError(error.text);
+        setError('Something went wrong. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -40,7 +41,7 @@ const App = () => {
     fetchImages();
   }, [query, page]);
 
-  const handleSearch = (newQuery) => {
+  const handleSearch = (newQuery: string) => {
     setQuery(newQuery);
     setImages([]);
     setPage(1);
@@ -50,7 +51,7 @@ const App = () => {
     setPage((prevPage) => prevPage + 1);
   };
 
-  const handleImageClick = (image) => {
+  const handleImageClick = (image: Image) => {
     setSelectedImage(image);
   };
 
@@ -64,8 +65,7 @@ const App = () => {
       {images.length > 0 && (
         <ImageGallery images={images} onImageClick={handleImageClick} />
       )}
-      {error !== null && <ErrorMessage text={'Something went wrong. Please try again.'} />}
-      
+      {error && <ErrorMessage text={error} />}
       {loading && <Loader />}
       {hasMore && !loading && <LoadMoreBtn onClick={handleLoadMore} />}
       <ImageModal
@@ -78,4 +78,5 @@ const App = () => {
 };
 
 export default App;
+
 

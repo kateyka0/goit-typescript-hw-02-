@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
 import Modal from 'react-modal';
-import css from './ImageModal.module.css'
+import css from './ImageModal.module.css';
+import { Image } from '../../types'; // Import the consistent interface
 
-const ImageModal = ({ image, isOpen, onRequestClose }) => {
-  // Використання useEffect для обробки події натискання ESC
+interface ImageModalProps {
+  image: Image | null;
+  isOpen: boolean;
+  onRequestClose: () => void;
+}
+
+const ImageModal: React.FC<ImageModalProps> = ({ image, isOpen, onRequestClose }) => {
   useEffect(() => {
-    const handleEsc = (event) => {
+    const handleEsc = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         onRequestClose();
       }
@@ -26,13 +32,15 @@ const ImageModal = ({ image, isOpen, onRequestClose }) => {
       className={css.modal}
       overlayClassName={css.overlay}
     >
-      <img src={image?.urls?.regular} alt={image?.alt} className={css.modalImage} />
+      {image ? (
+        <img src={image.urls.regular} alt={image.alt_description} className={css.modalImage} />
+      ) : (
+        <p>No image available</p>
+      )}
     </Modal>
   );
 };
 
-// Налаштування React Modal для рендерингу в певний елемент
 Modal.setAppElement('#root');
 
 export default ImageModal;
-
